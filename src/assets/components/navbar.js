@@ -1,9 +1,11 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Brain } from 'lucide-react';
 import useResponsive from '../utils/hooks';
 
 const Navbar = () => {
   const isMobile = useResponsive();
+  const navigate = useNavigate();
 
   const navStyle = {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -35,6 +37,7 @@ const Navbar = () => {
     fontSize: isMobile ? '1.25rem' : '1.5rem',
     fontWeight: '700',
     textDecoration: 'none',
+    cursor: 'pointer',
   };
 
   const navLinksStyle = {
@@ -59,6 +62,10 @@ const Navbar = () => {
     fontSize: isMobile ? '0.9rem' : '1rem',
   };
 
+  const linkHoverStyle = {
+    background: 'rgba(255, 255, 255, 0.1)',
+  };
+
   const buttonStyle = {
     background: 'rgba(255, 255, 255, 0.15)',
     border: 'none',
@@ -72,24 +79,72 @@ const Navbar = () => {
     fontSize: isMobile ? '0.85rem' : '1rem',
   };
 
+  const handleSignInClick = () => {
+    navigate('/signup');
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
   return (
     <nav style={navStyle}>
       <div style={containerStyle}>
-        <a href="#" style={logoStyle}>
+        <div onClick={handleLogoClick} style={logoStyle}>
           <Brain size={isMobile ? 28 : 32} />
           <span>Symptalyze</span>
-        </a>
+        </div>
         <ul style={navLinksStyle}>
-          <li><a href="#" style={linkStyle}>Home</a></li>
-          <li><a href="#" style={linkStyle}>Diagnose</a></li>
-          <li><a href="#" style={linkStyle}>Doctors</a></li>
-          <li><a href="#" style={linkStyle}>About</a></li>
-          <li><button style={buttonStyle}>Sign In</button></li>
+          <li>
+            <Link 
+              to="/" 
+              style={linkStyle}
+              onMouseEnter={(e) => Object.assign(e.target.style, linkHoverStyle)}
+              onMouseLeave={(e) => e.target.style.background = 'transparent'}
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/diagnose" 
+              style={linkStyle}
+              onMouseEnter={(e) => Object.assign(e.target.style, linkHoverStyle)}
+              onMouseLeave={(e) => e.target.style.background = 'transparent'}
+            >
+              Diagnose
+            </Link>
+          </li>
+          <li>
+            <Link 
+              to="/about" 
+              style={linkStyle}
+              onMouseEnter={(e) => Object.assign(e.target.style, linkHoverStyle)}
+              onMouseLeave={(e) => e.target.style.background = 'transparent'}
+            >
+              About
+            </Link>
+          </li>
+          <li>
+            <button 
+              style={buttonStyle}
+              onClick={handleSignInClick}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.25)';
+                e.target.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                e.target.style.transform = 'translateY(0)';
+              }}
+            >
+              Sign In
+            </button>
+          </li>
         </ul>
       </div>
     </nav>
   );
 };
-
 
 export default Navbar;
