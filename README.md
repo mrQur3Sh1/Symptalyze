@@ -2,7 +2,7 @@
 
 **AI-Powered Symptom Analysis and Doctor Recommendation Platform**
 
-Symptalyze is a smart web application that leverages advanced AI to help users analyze their symptoms and get expert recommendations — all in a few clicks. Built using GPT-based APIs and structured prompt engineering, Symptalyze empowers patients with clarity and guidance, without needing to train any custom model.
+Symptalyze is a smart web application that leverages advanced AI to help users analyze their symptoms and get expert recommendations  all in a few clicks. Built using GPT-based APIs and structured prompt engineering, Symptalyze empowers patients with clarity and guidance, without needing to train any custom model.
 
 ---
 
