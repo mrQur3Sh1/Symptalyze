@@ -97,16 +97,6 @@ const Navbar = () => {
         <ul style={navLinksStyle}>
           <li>
             <Link 
-              to="/" 
-              style={linkStyle}
-              onMouseEnter={(e) => Object.assign(e.target.style, linkHoverStyle)}
-              onMouseLeave={(e) => e.target.style.background = 'transparent'}
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link 
               to="/diagnose" 
               style={linkStyle}
               onMouseEnter={(e) => Object.assign(e.target.style, linkHoverStyle)}
@@ -124,22 +114,6 @@ const Navbar = () => {
             >
               About
             </Link>
-          </li>
-          <li>
-            <button 
-              style={buttonStyle}
-              onClick={handleSignInClick}
-              onMouseEnter={(e) => {
-                e.target.style.background = 'rgba(255, 255, 255, 0.25)';
-                e.target.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-                e.target.style.transform = 'translateY(0)';
-              }}
-            >
-              Sign In
-            </button>
           </li>
         </ul>
       </div>
