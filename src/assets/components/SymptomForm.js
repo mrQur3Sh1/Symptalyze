@@ -73,7 +73,7 @@ const SymptomForm = ({ onSubmit, loading }) => {
     width: isMobile ? '100%' : 'auto'
   };
 
-  const examplesStyle = {
+   const examplesStyle = {
     background: 'linear-gradient(135deg, #ebf8ff 0%, #dbeafe 100%)',
     borderRadius: '12px',
     padding: '1rem',

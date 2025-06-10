@@ -217,8 +217,11 @@ const App = () => {
         </style>
 
         <Routes>
+          {/* Signup route as the default landing page */}
+          <Route path="/" element={<SignupPage />} />
+          
           {/* Routes that include the navbar */}
-          <Route path="/" element={
+          <Route path="/home" element={
             <>
               <Navbar />
               <HomePage />
@@ -246,10 +249,10 @@ const App = () => {
             </>
           } />
           
-          {/* Signup route without navbar */}
+          {/* Legacy signup route (redirects to home for consistency) */}
           <Route path="/signup" element={<SignupPage />} />
           
-          {/* Redirect any unknown routes to home */}
+          {/* Redirect any unknown routes to signup page */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

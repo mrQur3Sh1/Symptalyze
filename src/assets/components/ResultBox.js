@@ -3,8 +3,8 @@ import { Stethoscope } from 'lucide-react';
 import useResponsive from '../utils/hooks';
 
 const ResultBox = ({ results }) => {
-  const isMobile = useResponsive();
 
+  const isMobile = useResponsive();
   const containerStyle = {
     background: '#ffffff',
     borderRadius: '16px',
@@ -15,6 +15,7 @@ const ResultBox = ({ results }) => {
     maxWidth: '100%',
   };
 
+  
   const headerStyle = {
     display: 'flex',
     alignItems: 'center',
