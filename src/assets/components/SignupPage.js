@@ -134,7 +134,7 @@ const SignupPage = () => {
         );
         
         if (user) {
-          window.location.href = '/signup'; // Navigate to dashboard or other screen
+          window.location.href = '/home'; // Navigate to dashboard or other screen
         } else {
           setErrors({ general: 'Invalid email or password' });
         }
