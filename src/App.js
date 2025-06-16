@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
 import Navbar from './assets/components/navbar';
 import SymptomForm from './assets/components/SymptomForm';
 import ResultBox from './assets/components/ResultBox';
 import DoctorCard from './assets/components/doctorCard';
 import SignupPage from './assets/components/SignupPage';
-import useResponsive from '../src/assets/utils/hooks'; 
+import useResponsive from '../src/assets/utils/hooks';
 
-// Home/Main component
 const HomePage = () => {
   const [diagnosisResults, setDiagnosisResults] = useState([]);
   const [recommendedDoctors, setRecommendedDoctors] = useState([]);
@@ -76,7 +75,6 @@ const HomePage = () => {
     padding: isMobile ? '0 0.5rem' : '0',
   };
 
-  // Mock data
   const mockDoctors = [
     {
       name: "Sarah Johnson",
@@ -112,30 +110,39 @@ const HomePage = () => {
 
   const handleSymptomSubmit = async (symptoms) => {
     setLoading(true);
+    setDiagnosisResults([]);
+    setRecommendedDoctors([]);
 
-    setTimeout(() => {
-      const mockResults = [
-        {
-          name: "Common Cold",
-          confidence: 85,
-          description: "A viral infection affecting the upper respiratory tract. Symptoms typically include runny nose, cough, and mild fever."
-        },
-        {
-          name: "Seasonal Allergies",
-          confidence: 65,
-          description: "Allergic reaction to environmental allergens such as pollen, dust, or pet dander causing similar respiratory symptoms."
-        },
-        {
-          name: "Viral Sinusitis",
-          confidence: 45,
-          description: "Inflammation of the sinuses caused by viral infection, often following a cold or upper respiratory infection."
-        }
-      ];
+    try {
+      const response = await fetch('http://localhost:5000/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: symptoms }),
+      });
 
-      setDiagnosisResults(mockResults);
+      const data = await response.json();
+
+      setDiagnosisResults([
+        {
+          name: "AI Medical Assistant",
+          confidence: 90,
+          description: data.reply,
+        },
+      ]);
+
       setRecommendedDoctors(mockDoctors);
+    } catch (error) {
+      console.error('AI Error:', error);
+      setDiagnosisResults([
+        {
+          name: "Error",
+          confidence: 0,
+          description: "Something went wrong. Please try again later.",
+        }
+      ]);
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -169,7 +176,6 @@ const HomePage = () => {
   );
 };
 
-// Main App component with Router
 const App = () => {
   const appStyle = {
     minHeight: '100vh',
@@ -189,25 +195,20 @@ const App = () => {
               0% { transform: rotate(0deg); }
               100% { transform: rotate(360deg); }
             }
-            
+
             * {
               box-sizing: border-box;
               margin: 0;
               padding: 0;
             }
-            
-            body {
+
+            body, html {
+              width: 100%;
+              overflow-x: hidden;
               margin: 0;
               padding: 0;
-              width: 100%;
-              overflow-x: hidden;
             }
-            
-            html {
-              width: 100%;
-              overflow-x: hidden;
-            }
-            
+
             @media (max-width: 768px) {
               body {
                 font-size: 14px;
@@ -217,42 +218,25 @@ const App = () => {
         </style>
 
         <Routes>
-          {/* Signup route as the default landing page */}
           <Route path="/" element={<SignupPage />} />
-          
-          {/* Routes that include the navbar */}
-          <Route path="/home" element={
-            <>
-              <Navbar />
-              <HomePage />
-            </>
-          } />
-          <Route path="/diagnose" element={
-            <>
-              <Navbar />
-              <HomePage />
-            </>
-          } />
+          <Route path="/home" element={<><Navbar /><HomePage /></>} />
+          <Route path="/diagnose" element={<><Navbar /><HomePage /></>} />
           <Route path="/about" element={
             <>
               <Navbar />
-              <div style={{ 
-                maxWidth: '1200px', 
-                margin: '0 auto', 
-                padding: '2rem', 
-                color: 'white', 
-                textAlign: 'center' 
+              <div style={{
+                maxWidth: '1200px',
+                margin: '0 auto',
+                padding: '2rem',
+                color: 'white',
+                textAlign: 'center'
               }}>
                 <h1>About Symptalyze</h1>
                 <p>Coming soon...</p>
               </div>
             </>
           } />
-          
-          {/* Legacy signup route (redirects to home for consistency) */}
           <Route path="/signup" element={<SignupPage />} />
-          
-          {/* Redirect any unknown routes to signup page */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
