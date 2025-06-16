@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, User, Mail, Lock, Eye, EyeOff, Heart, Shield, Zap, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 
+const API_CONFIG = {
+  LOGIN_URL: 'http://localhost:5000/api/auth/login',
+  SIGNUP_URL: 'http://localhost:5000/api/auth/signup',
+};
+
 const SignupPage = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +26,8 @@ const SignupPage = () => {
     height: typeof window !== 'undefined' ? window.innerHeight : 768
   });
 
-  // Dummy user data for testing
+
+  // Dummy user data for testing (fallback)
   const dummyUsers = [
     { email: 'demo@example.com', password: 'Demo123!', firstName: 'Demo', lastName: 'User' },
     { email: 'test@gmail.com', password: 'Test123!', firstName: 'Test', lastName: 'User' },
@@ -107,6 +113,73 @@ const SignupPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // API call functions
+  const loginUser = async (credentials) => {
+    try {
+      const response = await fetch(API_CONFIG.LOGIN_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      return {
+        success: true,
+        user: data.user,
+        token: data.token
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  };
+
+  const signupUser = async (userData) => {
+    try {
+      const response = await fetch(API_CONFIG.SIGNUP_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          password: userData.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Signup failed');
+      }
+
+      return {
+        success: true,
+        user: data.user,
+        message: data.message || 'Account created successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
@@ -115,8 +188,7 @@ const SignupPage = () => {
     }
   };
 
-
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -124,28 +196,66 @@ const SignupPage = () => {
     }
 
     setIsLoading(true);
+    setErrors({});
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
       if (isLogin) {
-        // Check dummy users for login
-        const user = dummyUsers.find(u => 
-          u.email === formData.email && u.password === formData.password
-        );
-        
-        if (user) {
-          window.location.href = '/home'; // Navigate to dashboard or other screen
+        // Login API call
+        const result = await loginUser({
+          email: formData.email,
+          password: formData.password
+        });
+
+        if (result.success) {
+          // Store token if provided
+          if (result.token) {
+            // You can store token in localStorage or context
+            // localStorage.setItem('authToken', result.token);
+          }
+          
+          // Redirect to dashboard or home page
+          window.location.href = '/home';
+          // Or use your routing method: navigate('/home');
         } else {
-          setErrors({ general: 'Invalid email or password' });
+          // If API fails, fallback to dummy data for testing
+          const user = dummyUsers.find(u => 
+            u.email === formData.email && u.password === formData.password
+          );
+          
+          if (user) {
+            window.location.href = '/home';
+          } else {
+            setErrors({ general: result.error || 'Invalid email or password' });
+          }
         }
       } else {
-        // Signup success
-        alert('Account created successfully! You can now login with your credentials.');
-        setIsLogin(true);
-        setFormData(prev => ({ ...prev, confirmPassword: '' }));
+        // Signup API call
+        const result = await signupUser({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password
+        });
+
+        if (result.success) {
+          alert(result.message || 'Account created successfully! You can now login with your credentials.');
+          setIsLogin(true);
+          setFormData(prev => ({ 
+            ...prev, 
+            firstName: '',
+            lastName: '',
+            confirmPassword: '' 
+          }));
+        } else {
+          setErrors({ general: result.error || 'Failed to create account' });
+        }
       }
+    } catch (error) {
+      console.error('API Error:', error);
+      setErrors({ general: 'Something went wrong. Please try again.' });
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const fillDummyData = () => {
@@ -183,6 +293,8 @@ const SignupPage = () => {
     setErrors({});
   };
 
+  
+  
   if (isLoggedIn) {
     return (
       <div style={{
