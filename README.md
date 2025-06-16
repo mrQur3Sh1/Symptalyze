@@ -40,5 +40,3 @@ Symptalyze is a smart web application that leverages advanced AI to help users a
 - MONGODB_URI=your_mongodb_connection_string
 - COHERE_API_KEY=your_cohere_api_key
 - # OR use other models
-- # OPENAI_API_KEY=your_openai_api_key
-- # GEMINI_API_KEY=your_gemini_api_key
